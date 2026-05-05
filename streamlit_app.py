@@ -740,7 +740,7 @@ def page_home():
 
     all_skills = []
     for value in df["skills_extracted"].dropna():
-    all_skills.extend(parse_skills_from_cell(value))
+        all_skills.extend(parse_skills_from_cell(value))
 
     top_skill = Counter(all_skills).most_common(1)[0][0] if all_skills else "N/A"
 
