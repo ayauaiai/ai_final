@@ -731,11 +731,17 @@ def page_home():
 
     st.markdown("<div class='section-title'>Dataset Snapshot</div>", unsafe_allow_html=True)
 
+    for value in df["skills_extracted"].dropna():
+    all_skills.extend(parse_skills_from_cell(value))
+
+    top_skill = Counter(all_skills).most_common(1)[0][0]
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Total Vacancies", len(df))
     m2.metric("Unique Roles", df["role_guess"].nunique())
     m3.metric("Clear Rows", len(df[df["role_guess"].astype(str).str.lower() != "other"]))
     m4.metric( "Top Skill", top_skill.title(), "Most mentioned skill")
+
+    
     st.markdown("<div class='section-title'>How It Works</div>", unsafe_allow_html=True)
 
     h1, h2, h3, h4 = st.columns(4)
