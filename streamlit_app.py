@@ -735,7 +735,7 @@ def page_home():
     m1.metric("Total Vacancies", len(df))
     m2.metric("Unique Roles", df["role_guess"].nunique())
     m3.metric("Clear Rows", len(df[df["role_guess"].astype(str).str.lower() != "other"]))
-
+    m4.metric( "Top Skill", top_skill.title(), "Most mentioned skill")
     st.markdown("<div class='section-title'>How It Works</div>", unsafe_allow_html=True)
 
     h1, h2, h3, h4 = st.columns(4)
