@@ -1361,7 +1361,7 @@ def page_contact():
             <div class="small-card">
                 <h3>Project Info</h3>
                 <p><b>Project:</b> SkillMatch Jobs</p>
-                <p><b>Email:</b> example@email.com</p>
+                <p><b>Email:</b> skillMatchjobs@email.com</p>
                 <p><b>Location:</b> Kazakhstan</p>
                 <p class="muted">
                     This project recommends vacancies using a Telegram vacancy dataset
