@@ -745,7 +745,7 @@ def page_home():
     top_skill = Counter(all_skills).most_common(1)[0][0] if all_skills else "N/A"
 
     m1.metric("Total Vacancies", total_vacancies)
-    m2.metric("Unique Roles", unique_roles)
+    m2.metric("Unique Roles", unique_roles - 1)
     m3.metric("Clear Rows", clear_rows)
     m4.metric("Top Skill", top_skill.title())
 
@@ -1176,7 +1176,7 @@ def page_dataset_overview():
         top_skill = Counter(all_skills).most_common(1)[0][0] if all_skills else "N/A"
 
         m1.metric("Total Vacancies", total_vacancies)
-        m2.metric("Unique Roles", unique_roles)
+        m2.metric("Unique Roles", unique_roles - 1)
         m3.metric("Clear Rows", clear_rows)
         m4.metric("Top Skill", top_skill.title())
 
