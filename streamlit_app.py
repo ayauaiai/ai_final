@@ -1219,7 +1219,7 @@ def page_dataset_overview():
             all_skills.extend(parse_skills_from_cell(value))
 
     if all_skills:
-        skill_counts = Counter(all_skills).most_common(20)
+        skill_counts = Counter(all_skills).most_common(10)
         skill_df = pd.DataFrame(skill_counts, columns=["skill", "count"])
 
         fig = px.bar(
