@@ -1123,29 +1123,6 @@ def page_results():
 
         st.divider()
 
-    st.markdown("### Learning Roadmap")
-
-    r1, r2, r3, r4 = st.columns(4)
-
-    roadmap = [
-        ("1", "Learn Missing Skills", "Focus on skills repeated in similar vacancies."),
-        ("2", "Build Portfolio", "Create one project related to your predicted role."),
-        ("3", "Prepare CV", "Add skills, tools, and project results clearly."),
-        ("4", "Apply", "Apply to vacancies similar to your profile."),
-    ]
-
-    for col, item in zip([r1, r2, r3, r4], roadmap):
-        with col:
-            st.markdown(
-                f"""
-                <div class="small-card">
-                    <h2>{item[0]}</h2>
-                    <h4>{item[1]}</h4>
-                    <p class="muted">{item[2]}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
 
 
 # =========================================================
