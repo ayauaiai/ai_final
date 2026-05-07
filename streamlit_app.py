@@ -1227,7 +1227,7 @@ def page_dataset_overview():
             x="count",
             y="skill",
             orientation="h",
-            title="Top 20 Skills in Dataset",
+            title="Top 10 Skills in Dataset",
         )
         fig.update_layout(
             xaxis_title="Count",
