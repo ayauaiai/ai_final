@@ -295,12 +295,12 @@ st.markdown(
 
 def clean_text(text: str) -> str:
     text = str(text).lower()
-    text = re.sub(r"http\\S+|www\\.\\S+", " ", text)
-    text = re.sub(r"@[\\w_]+", " ", text)
-    text = re.sub(r"#(\\w+)", r" \\1 ", text)
-    text = text.replace("\\n", " ").replace("/", " ")
-    text = re.sub(r"[^a-zа-яё0-9+#.\\s-]", " ", text)
-    text = re.sub(r"\\s+", " ", text).strip()
+    text = re.sub(r"http\S+|www\.\S+", " ", text)
+    text = re.sub(r"@[\w_]+", " ", text)
+    text = re.sub(r"#(\w+)", r" \1 ", text)
+    text = text.replace("\n", " ").replace("/", " ")
+    text = re.sub(r"[^a-zа-яё0-9+#.\s-]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
@@ -309,7 +309,7 @@ def extract_skills(text: str) -> list[str]:
     found = []
 
     for skill in SKILL_KEYWORDS:
-        pattern = r"(?<!\\w)" + re.escape(skill.lower()) + r"(?!\\w)"
+        pattern = r"(?<!\w)" + re.escape(skill.lower()) + r"(?!\w)"
         if re.search(pattern, text):
             found.append(skill)
 
@@ -396,6 +396,23 @@ def find_first_existing_column(df, possible_columns):
         if col in df.columns:
             return col
     return None
+
+
+def has_valid_skill_input(detected_skills, minimum_skills=1):
+    return len(detected_skills) >= minimum_skills
+
+
+def is_good_similarity(similar_df, threshold=0.08):
+    if similar_df.empty or "similarity" not in similar_df.columns:
+        return False
+
+    max_similarity = float(similar_df["similarity"].max())
+    return max_similarity >= threshold
+
+
+def clear_previous_result():
+    if "result" in st.session_state:
+        del st.session_state["result"]
 
 
 # =========================================================
@@ -548,6 +565,9 @@ def find_similar_vacancies(text, df, vectorizer, matrix, top_n=10):
 
 
 def calculate_missing_skills(user_skills, similar_df, top_n=10):
+    if not user_skills:
+        return []
+
     vacancy_skills = []
 
     for _, row in similar_df.iterrows():
@@ -845,7 +865,8 @@ def page_find_vacancy():
 
         if submit:
             if not skills or len(skills.strip()) < 5:
-                st.warning("Please write at least a few skills.")
+                clear_previous_result()
+                st.warning("Please write at least a few real IT skills.")
                 return
 
             user_text = f"""
@@ -856,8 +877,15 @@ def page_find_vacancy():
             Preferred tasks: {tasks}
             """
 
-            predicted_role, top_roles = predict_top_roles(model, user_text)
             detected_skills = extract_skills(user_text)
+
+            if not has_valid_skill_input(detected_skills, minimum_skills=1):
+                clear_previous_result()
+                st.warning(
+                    "No valid IT skills were detected. Please enter real technical skills such as "
+                    "Python, SQL, Docker, React, Figma, PostgreSQL, Testing, or Power BI."
+                )
+                return
 
             similar = find_similar_vacancies(
                 user_text,
@@ -867,6 +895,14 @@ def page_find_vacancy():
                 top_n=10,
             )
 
+            if not is_good_similarity(similar, threshold=0.08):
+                clear_previous_result()
+                st.warning(
+                    "No suitable vacancy match was found. Please add more specific IT skills, tools, or tasks."
+                )
+                return
+
+            predicted_role, top_roles = predict_top_roles(model, user_text)
             missing_skills = calculate_missing_skills(detected_skills, similar)
 
             st.session_state["result"] = {
@@ -930,6 +966,13 @@ def page_results():
     detected_skills = result["detected_skills"]
     similar = result["similar"]
     missing_skills = result["missing_skills"]
+
+    if not detected_skills:
+        st.warning("No valid IT skills were detected. Please go back and enter real technical skills.")
+        if st.button("Go to Find Vacancy", type="primary"):
+            st.session_state.page = "Find Vacancy"
+            st.rerun()
+        return
 
     st.markdown(
         f"""
